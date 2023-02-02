@@ -1,7 +1,7 @@
 <template>
   <ion-page>
     <ion-header :translucent="true">
-      <ion-toolbar>
+      <ion-toolbar color="secondary">
         <ion-title>Time fighter</ion-title>
         <ion-buttons slot="primary">
           <ion-button color="primary" fill="solid" @click="info">
@@ -11,12 +11,12 @@
       </ion-toolbar>
     </ion-header>
     
-    <ion-content :fullscreen="true">
+    <ion-content :fullscreen="true" color="tertiary">
       <ion-header class="ion-no-border ion-padding-top ion-padding-horizontal">
         <ion-grid>
           <ion-row>
-            <ion-col>
-              <div class="ion-text-start">
+            <ion-col id="blink">
+              <div  class="ion-text-start">
                 Your Score: {{ score }}
               </div>
             </ion-col>
@@ -31,7 +31,7 @@
     
       <div id="container">
 
-        <ion-button color="primary"  @click="tap">Tap Me</ion-button>
+        <ion-button id="tapMeButton" color="primary"  @click="tap">Tap Me</ion-button>
       </div>
     </ion-content>
   </ion-page>
@@ -51,7 +51,7 @@ import {
 } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { informationCircleOutline } from 'ionicons/icons'
-
+import {createAnimation} from '@ionic/vue'
 const INITIAL_TIME= 5
 export default defineComponent({
   name: 'HomePage',
@@ -96,6 +96,20 @@ export default defineComponent({
     }
   },
   methods: {
+    bounce () {
+      const animation = createAnimation()
+      animation.addElement(document.getElementById('tapMeButton'))
+          .duration(2000)
+          .fromTo('transform','scale(2.0)','sacale(1.0)')
+      animation.play();
+    },
+    blink(){
+      const animation = createAnimation()
+      animation.addElement(document.getElementById('blink'))
+          .duration(500)
+          .fromTo('opacity','0.0','1.0')
+      animation.play();
+    },
     async info(){
       const alert = await alertController
           .create({
@@ -108,7 +122,10 @@ export default defineComponent({
       await alert.present();
     },
     tap () {
+      this.bounce()
       this.score++
+      this.blink()
+
       if (!this.started){
         this.counterInterval = setInterval( () => {
           this.timeLeft--
